@@ -2,36 +2,72 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DataTableHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Orders;
 use App\Models\OrderList;
 use App\Models\User;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderCancelEmail;
-use App\Mail\ConfirmationEmail;
 use App\Mail\OrderDeliveredEmail;
+use App\Models\OrderDetail;
+use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
+        if (request()->ajax()) {
+            $query = Orders::with(['getdeliveryaddress', 'getdeliverytime'])->latest();
 
-        $list = Orders::orderByDesc('created_at')->get();
-        return view('backend.admin.orders.index', get_defined_vars());
+            return DataTableHelper::create($query)
+                ->addAutoIndex()
+                ->columns(function ($row) {
+                    return [
+                        'order_id' => $row->custom_order_id ?: $row->id,
+                        'user_name' => $row->getdeliveryaddress->fname . ' ' . $row->getdeliveryaddress->lname,
+                        'user_email' => $row->getdeliveryaddress->email,
+                        'delivery_time' => $row->getdeliverytime->date . " {$row->getdeliverytime->start_time} - {$row->getdeliverytime->end_time}",
+                        'status' => match ($row->status) {
+                            2 => '<span class="badge badge-danger">Cancelled</span>',
+                            1 => '<span class="badge badge-success">Completed</span>',
+                            0 => '<span class="badge badge-primary">Pending</span>',
+                        },
+                        'created_at' => $row->created_at?->toDateTimeString(),
+                        'handle' => Blade::render(<<<'HTML'
+                            <a href="{{ route('admin.order.edit', ['orders' => $item->id]) }}">
+                                <i class="bx bx-edit-alt" style="color: green;"></i>
+                            </a>
+                            <a href="{{ route('admin.order.destroy', ['orders' => $item->id]) }}" onclick="return confirm('Are you sure To Delete This?')">
+                                <i class="bx bx-trash-alt" style="color: green;"></i>
+                            </a>
+                        HTML , ['item' => $row])
+                    ];
+                })
+                ->filter(function ($build, $keyword) {
+                    return [
+                        'user_name' => $build->orWhereRelation('getdeliveryaddress', 'like', "%$keyword%"),
+                        'user_email' => $build->orWhereRelation('getdeliveryaddress', 'email', "%$keyword%"),
+                        'delivery_time' => $build->orWhereRelation('getdeliverytime', 'date', "%$keyword%"),
+                        'order_id' => $build->orWhere('custom_order_id', 'like', "%$keyword%"),
+                    ];
+                })
+                ->json();
+        }
+
+        return view('backend.admin.orders.index');
     }
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function create()
     {
@@ -40,15 +76,9 @@ class OrderController extends Controller
         return view('backend.admin.orders.create', get_defined_vars());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(Request $request, Orders $orders)
     {
-
         $request->validate([
             'user_id'                 => 'required',
             'product_id'          => 'required',
@@ -63,16 +93,11 @@ class OrderController extends Controller
             $orderlist->product_id = $value;
             $orderlist->save();
         }
-
-
         return redirect()->route('admin.order.index')->with('message', "Data Added Successfully!");
     }
 
     /**
      * Display the specified resource.
-     *
-     * @param  \App\Models\Orders  $orders
-     * @return \Illuminate\Http\Response
      */
     public function edit(Orders $orders)
     {
@@ -83,8 +108,6 @@ class OrderController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Orders  $orders
-     * @return \Illuminate\Http\Response
      */
     public function show(Orders $orders)
     {
@@ -128,7 +151,8 @@ class OrderController extends Controller
         }
     }
 
-    public function showCopyOrder(Orders $orders){
+    public function showCopyOrder(Orders $orders)
+    {
         list($discount_without_coupons, $total, $total_discount, $tax, $totalTaxAmt12, $totalTaxAmt25) = order_details($orders);
         return view('backend.admin.orders.copy', get_defined_vars());
     }
@@ -266,16 +290,65 @@ class OrderController extends Controller
     }
     /**
      * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Orders  $orders
-     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Orders $orders)
     {
         $request->validate([
-            'status'        => 'required',
+            'status' => 'required',
         ]);
+
+        if (!empty($request->items)) {
+            $baseId = $orders->custom_order_id;
+            $maxSuffix = Orders::where('custom_order_id', $baseId)->orWhere('custom_order_id', 'like',"$baseId-%")->count()-1;
+
+            preg_match("/^([^-]*)-(.*)$/", $baseId, $matches);
+
+            if (count($matches) > 1) {
+                $baseId = $matches[1];
+                if ($maxSuffix < $matches[2]) {
+                    $maxSuffix = $matches[2];
+                }
+            }
+
+            $totalPrice = 0;
+            $productPrices = $request->items['product_price'] ?? [];
+            $quantities = $request->items['qty'] ?? [];
+            foreach ($productPrices as $key => $price) {
+                $qty = $quantities[$key] ?? 0;
+                $price = $productPrices[$key] ?? 0;
+                $totalPrice += $price * $qty;
+            }
+
+            $clonedOrder = $orders->replicate();
+            $clonedOrder->id = Str::uuid();
+            $clonedOrder->total_price = $totalPrice ?? 0;
+            $clonedOrder->save();
+            $clonedOrder->custom_order_id = $baseId . '-' . ($maxSuffix + 1);
+            $clonedOrder->save();
+
+            $quantities = $request->items['qty'] ?? [];
+            $itemIds = $request->items['item_id'] ?? [];
+            /*foreach ($itemIds as $key => $itemId) {
+                $orderlist = new OrderList();
+                $orderlist->order_id = $clonedOrder->id;
+                $orderlist->qty = $quantities[$key] ?? 0;
+                $orderlist->product_id = $request->items['product_id'][$key] ?? null;
+                $orderlist->save();
+            }*/
+            foreach ($itemIds as $key => $itemId) {
+                $orderlist = new OrderDetail();
+                $orderlist->product_id = $request->items['product_id'][$key] ?? null;
+                $orderlist->order_id = $clonedOrder->id;
+                $orderlist->qty = $quantities[$key] ?? 0;
+                $orderlist->save();
+            }
+
+            $orders->status = 2;
+            $orders->save();
+
+            return redirect()->route('admin.order.edit', $clonedOrder->id)->with('message', "Order Cloned and Updated Successfully!");
+        }
+
         if ($request->status == 1) {
             $check = $this->captureOrder($orders->id, $orders->total_price);
             if ($check['code'] == "201") {
@@ -304,22 +377,22 @@ class OrderController extends Controller
     {
         $order = Orders::where("id", $order_id)->first();
 
-        
-        if($order->getuser->customer_type == 1) {
+
+        if ($order->getuser->customer_type == 1) {
             $order->status = 2;
             $order->getdeliverytime->status = 1;
             $order->save();
 
-            if($order->getuser->email){
+            if ($order->getuser->email) {
                 Mail::to($order->getuser->email)->send(new OrderCancelEmail($order));
             }
             Mail::to(env("MAIL_BCC_ADDRESS"))->send(new OrderCancelEmail($order, true));
 
             return response()->json("Data Updated Successfully!");
-        }else{
+        } else {
 
             $check = $this->cancelOrder($order->id);
-            if ($check['code'] == "201" ) {
+            if ($check['code'] == "201") {
 
                 $order->status = 2;
                 $order->getdeliverytime->status = 1;
@@ -327,7 +400,6 @@ class OrderController extends Controller
 
                 Mail::to($order->getuser->email)->send(new OrderCancelEmail($order));
                 Mail::to(env("MAIL_BCC_ADDRESS"))->send(new OrderCancelEmail($order, true));
-
             } else {
                 return response()->json($check['message']);
                 //  return redirect()->route('admin.order.index')->with('message',$check['message']);
@@ -335,8 +407,6 @@ class OrderController extends Controller
 
             return response()->json("Data Updated Successfully!");
         }
-
-        
     }
 
 
@@ -344,7 +414,7 @@ class OrderController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Orders  $orders
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy(Orders $orders)
     {

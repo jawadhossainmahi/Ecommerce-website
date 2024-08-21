@@ -9,18 +9,18 @@
     # PRODUCTION RULES
 
     # Ensure www.
-    RewriteCond %{HTTP_HOST} !^www\. [NC]
-    RewriteRule ^(.*)$ https://www.livshem.se/$1 [L,R=301]
+    RewriteCond %{HTTP_HOST} !^demo\. [NC]
+    RewriteRule ^(.*)$ https://demo.livshem.se/$1 [L,R=301]
     
     # Ensure https
     RewriteCond %{HTTP:X-Forwarded-Proto} !https
     RewriteCond %{HTTPS} off
-    RewriteRule ^(.*)$ https://www.livshem.se/$1 [L,R=301]
+    RewriteRule ^(.*)$ https://demo.livshem.se/$1 [L,R=301]
 
     
-    # DEVELOPMENT RULES
+    # # DEVELOPMENT RULES
 
-    # Ensure www.
+    # # Ensure www.
     # RewriteCond %{HTTP_HOST} !^www\. [NC]
     # RewriteRule ^(.*)$ http://localhost:8000/$1 [L,R=301]
     

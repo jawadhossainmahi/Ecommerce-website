@@ -56,4 +56,14 @@ class DeliveryAddressController extends Controller
         }
         return response()->json(404);
     }
+
+    public function deleteAddress($id)
+    {
+        $address = DeliveryAddress::findOrFail($id);
+        if ($address) {
+            $address->delete();
+            UserDelivery::where('delivery_address_id', $address->id)->delete();
+        }
+        return redirect()->back()->with(['success'=> 'Delivery Address Deleted Successfully!']);
+    }
 }

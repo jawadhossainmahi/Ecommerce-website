@@ -6,129 +6,6 @@
 <!DOCTYPE html>
 <html lang="sv" xml:lang="sv">
 @include('frontend.layouts.head')
-<style>
-    * {
-        font-family: 'livshem-font';
-    }
-
-    .swiper-slide label {
-        width: 100%;
-    }
-
-    .select-day-card {
-        height: 8rem;
-    }
-
-    /* General Styling */
-    .loader-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        padding: 1rem;
-    }
-
-    html,
-    body {
-        /* margin: 0; */
-        height: 100%;
-    }
-
-    body {
-        display: grid;
-        /* grid-gap: 10px; */
-        grid-template-columns: 1fr;
-        grid-template-areas: "main" "footer";
-        grid-template-rows: 1fr 318px;
-    }
-
-    .main-content {
-        grid-area: main;
-    }
-
-    footer {
-        grid-area: footer;
-    }
-
-    @media (max-width: 567px) {
-        h1 {
-            font-size: 7vw;
-            text-align: center;
-        }
-    }
-
-    .sort-area {
-        display: flex;
-        justify-content: space-between;
-    }
-
-    .home-sortby {
-        width: 14%;
-        border-radius: 25px;
-    }
-
-    .home-sortby option {}
-
-    .sortby-dropdown {
-        margin-right: 0px;
-    }
-
-    .sortby-dropdown button {
-        color: #000 !important;
-        /* border-radius: 20px; */
-        padding: 5px 25px;
-        background: #FFF !important;
-    }
-
-    .sortby-dropdown ul {}
-
-    .sortby-dropdown ul li {}
-
-    .sortby-dropdown ul li a {
-        color: #000 !important;
-    }
-
-    .sortby-dropdown ul li a:hover {
-        background: none;
-    }
-
-    .sortby-dropdown .dropdown-menu::before {
-        border-bottom: 10px solid #fff;
-        border-left: 10px solid transparent;
-        border-right: 10px solid transparent;
-        content: "";
-        display: block;
-        height: 0;
-        position: absolute;
-        right: 60px;
-        top: -10px;
-        width: 0;
-    }
-
-    .category-filter {
-        position: absolute;
-        right: 15px;
-        top: -33px;
-    }
-
-    .swiper-custom {
-        color: #268639 !important;
-        font-weight: bold;
-    }
-
-    .swiper-custom::after {
-        font-size: 30px !important;
-    }
-
-    @media(max-width:450px) {
-        .category-filter {
-            position: absolute;
-            right: 15px;
-            top: -33px;
-        }
-    }
-</style>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
 
 <body class=" relative h-full" id="body">
     <div class="main-content max-w-[100vw]">
@@ -136,8 +13,7 @@
         @auth
             <input type="hidden" id="main-id" value="{{ auth()->user()->id }}">
         @endauth
-        <div class="side-cart offcanvas offcanvas-end" tabindex="-1" id="cart"
-            aria-labelledby="offcanvasRightLabel">
+        <div class="side-cart offcanvas offcanvas-end" tabindex="-1" id="cart" aria-labelledby="offcanvasRightLabel">
             <div class="offcanvas-header">
 
                 <h5 id="offcanvasRightLabel" class=" side-cart-heading ">Varukorg</h5>
@@ -149,39 +25,49 @@
 
                 <div class="side-cart-links">
 
-                    <h3 id="post-number-btn" data-bs-toggle="modal" data-bs-target="#input-code">Postnummer, </h3>
+                    <h3 id="post-number-btn" data-bs-toggle="modal" data-bs-target="#input-code"> Ange ditt postnummer </h3>
                     {{-- <h3 id="post-number-btn" data-bs-toggle="modal" data-bs-target="#change_alert">alert, </h3> --}}
-                    <h3 id="reserve-time-btn" class="hidden" data-bs-toggle="modal" data-bs-target="#select-date-time">
-                        Reservera tid</h3>
+                    <h3 id="reserve-time-btn" class="hidden" data-bs-toggle="modal" data-bs-target="#select-date-time">Reservera tid</h3>
                 </div>
                 <div class="cart-progress-bar">
                     <span>
-                        <h3 id="p_message"></h3>
-                        <!--<i class="bi bi-exclamation-circle"></i>-->
+                        @if (auth()->user()?->customer_type == 1)
+                            <h3 id="counter" class="business" style="margin-left: 15px;">Handla för 1500 till</h3>
+                            <h3 id="p_message" class="d-none"></h3>
+                        @else
+                            <h3 id="counter" class="business d-none"></h3>
+                            <h3 id="p_message"></h3>
+                        @endif
                     </span>
 
-                    <div class="progress">
-                        <div class="progress-bar" id="p-bar" role="progressbar" style="width: 25%" aria-valuenow="0"
-                            aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress {{ auth()->user()?->customer_type == 1 ? '' : 'd-none' }}">
+                        <div class="progress-bar" id="cdp-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
-                    <p id="p_message2">då slipper du transport avgiften på 95 kr</p>
+                    <div class="progress {{ auth()->user()?->customer_type == 1 ? 'd-none' : '' }}">
+                        <div class="progress-bar" id="p-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+
+                    @auth
+                        @if (auth()->user()->customer_type == 1)
+                            <p>För att komma upp till minsta order värde</p>
+                        @endif
+                    @endauth
+                    <p id="p_message2" class="{{ auth()->user() ? (auth()->user()->customer_type == 1 ? 'd-none' : '') : '' }}">då slipper du transport avgiften på 95 kr</p>
                 </div>
 
 
                 <div class="cart-products" id="cart-product">
                     <h2 class="ms-3" id="message"></h2>
                 </div>
-                {{-- @auth --}}
 
+                @auth
                 <div class="cart-products w-100 d-flex justify-center">
-                    <button data-bs-toggle="modal" data-bs-target="#soppinglist" class="ms-3" id="shopping"><i
-                            class="bi bi-cart4 col-lg-12 my-4 bg-color-black"></i> Spara som inköpslista</button>
+                    <button data-bs-toggle="modal" data-bs-target="#soppinglist" class="ms-3" id="shopping"><i class="bi bi-cart4 col-lg-12 my-4 bg-color-black"></i> Spara som inköpslista</button>
                 </div>
+                @endauth
 
-                {{-- @endauth --}}
                 <div class="empty">
-                    <button class="empty-btn my-4" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Töm
-                        varukorg</button>
+                    <button class="empty-btn my-4" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Töm varukorg</button>
                 </div>
 
 
@@ -217,17 +103,23 @@
 
             </div>
         </div>
-        <div class=" modal fade" id="staticBackdrop" data-bs-keyboard="false" tabindex="-1"
-            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <style>
+            .disabledCheckout {
+                pointer-events: none;
+                /* Disable clicking */
+                opacity: 0.5;
+                /* Make it look disabled */
+                cursor: not-allowed;
+                /* Change cursor to indicate it's disabled */
+            }
+        </style>
+        <div class=" modal fade" id="staticBackdrop" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
-
-                        <i class="bi bi-x-lg" type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="Close"></i>
+                        <i class="bi bi-x-lg" type="button" data-bs-dismiss="modal" aria-label="Close"></i>
                     </div>
-                    <h1 class="modal-title text-center" id="staticBackdropLabel" style="font-size:20px"><b>Starta en ny
-                            varukorg?</b></h1>
+                    <h1 class="modal-title text-center" id="staticBackdropLabel" style="font-size:20px"><b>Starta en ny varukorg?</b></h1>
                     <div class="modal-body" style="text-align: center">
 
                         <h6 class="my-"> Vill du verkligen starta en ny varukorg?</h6>
@@ -240,17 +132,14 @@
             </div>
         </div>
         {{-- shopping modal create shop --}}
-        <div class="select modal fade " id="soppinglist" data-bs-keyboard="false" tabindex="-1"
-            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="select modal fade " id="soppinglist" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
 
-                        <i class="bi bi-x-lg" id="shoppinglist_modal_close" type="button" class="btn-close"
-                            data-bs-dismiss="modal" aria-label="Close"></i>
+                        <i class="bi bi-x-lg" id="shoppinglist_modal_close" type="button" data-bs-dismiss="modal" aria-label="Close"></i>
                     </div>
-                    <h1 class="text-center heading" id="soppinglist" style="font-size:20px"><b
-                            style="font-weight: 600; font-size: 25px;">Spara till inköpslistan</b></h1>
+                    <h1 class="text-center heading" id="soppinglist" style="font-size:20px"><b style="font-weight: 600; font-size: 25px;">Spara till inköpslistan</b></h1>
                     <form id="shopping-card-submit">
                         <div class="modal-body">
 
@@ -282,8 +171,7 @@
     @include('frontend.layouts.footer')
 
 
-    <div class="select-day-modal modal fade" id="select-date-time" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="select-day-modal modal fade" id="select-date-time" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
 
             <div class="modal-content">
@@ -291,8 +179,7 @@
                     @csrf
                     <div class="modal-header">
 
-                        <i class="bi bi-x-lg" type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="Close"></i>
+                        <i class="bi bi-x-lg" type="button" data-bs-dismiss="modal" aria-label="Close"></i>
                     </div>
 
                     <div class="modal-body">
@@ -311,8 +198,7 @@
 
                                 <div class="swiper mySwiper dateTimeWrapper">
 
-                                    <ul class="nav nav-pills mb-3 flex-nowrap swiper-wrapper dateTimeList"
-                                        id="pills-tabs" role="tablist">
+                                    <ul class="nav nav-pills mb-3 flex-nowrap swiper-wrapper dateTimeList" id="pills-tabs" role="tablist">
 
                                     </ul>
 
@@ -329,7 +215,6 @@
 
                     </div>
 
-
                     <div class="modal-footer">
                         <button class="btn-close" data-bs-dismiss="modal" type="submit">Gå vidare</button>
                     </div>
@@ -339,8 +224,7 @@
         </div>
     </div>
     {{-- next modal postcode request modal --}}
-    <div id="exampleModalToggle" class="post-code modal fade" aria-hidden="true"
-        aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div id="exampleModalToggle" class="post-code modal fade" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -355,46 +239,32 @@
                     </p>
                     <div>
                         <h6 class="text-muted" style="text-align: center"><b>E-postadress</b></h6>
-                        <input type="text" id="email" name="email" class="m-1  form-control" required
-                            style="background:hsla(0, 0%, 100% , 0.36);text-align:center;">
+                        <input type="text" id="email" name="email" class="m-1  form-control" required style="background:hsla(0, 0%, 100% , 0.36);text-align:center;">
                     </div>
                     <h6 id="emailError" class="text-center text-danger hidden ">Platser Ange din e-post</h6>
                 </div>
 
                 <div class="modal-footer">
                     <!--<p><a href="login.html">Logga in</a> eller <a href="login.html">Skapa inloggning</a></p>-->
-                    <h6 class="text-center my-2"><button id="save-btnss" class="btn btn-success rounded"
-                            type="submit" value="Save"
-                            style="background: #15803d; padding: 10px 30px;">Tack!</button></h6>
+                    <h6 class="text-center my-2"><button id="save-btnss" class="btn btn-success rounded" type="submit" value="Save" style="background: #15803d; padding: 10px 30px;">Tack!</button></h6>
                 </div>
-
-
-
-
             </div>
         </div>
     </div>
-    <div id="change_alert" class="change_alert modal fade" aria-hidden="true"
-        aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div id="change_alert" class="change_alert modal fade" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    {{-- <i class="bi bi-x-lg " type="button" id="postcode_closes" data-bs-dismiss="modal"></i> --}}
+                    <i class="bi bi-x-lg" type="button" data-bs-dismiss="modal" aria-label="Close"></i>
                 </div>
-
+                <h1 class="modal-title text-center" style="font-size:20px"><b>Uppdatering av varukorg</b></h1>
                 <div class="modal-body" style="justify-content:center">
-                    <h1 class="text-center text-slate-950">Uppdatering av varukorg Din varukorg uppdateras med aktuella
-                        priser och varor.</h1>
-
-
-
+                    <h1 class="text-center text-slate-950">Din varukorg uppdateras med aktuella priser och varor.</h1>
                 </div>
 
-                <div class="modal-footer">
+                <div class="modal-footer justify-content-center">
                     <!--<p><a href="login.html">Logga in</a> eller <a href="login.html">Skapa inloggning</a></p>-->
-                    <h6 class="text-center my-2"><button id="save-btnss" class="btn btn-success rounded"
-                            type="button" data-bs-dismiss="modal"
-                            style="background: #15803d; padding: 10px 30px;">Ok</button></h6>
+                    <h6 class="text-center my-2"><button id="save-btnss" class="btn btn-success rounded" type="button" data-bs-dismiss="modal" style="background: #15803d; padding: 10px 30px;">Ok</button></h6>
                 </div>
 
 
@@ -403,13 +273,11 @@
             </div>
         </div>
     </div>
-    <div class="post-code modal fade" id="input-code" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="post-code modal fade" id="input-code" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <i class="bi bi-x-lg" type="button" id="postcode_close" class="btn-close"
-                        data-bs-dismiss="modal"></i>
+                    <i class="bi bi-x-lg" type="button" id="postcode_close" data-bs-dismiss="modal"></i>
                 </div>
                 <form id="postcode_add" method="POST">
                     @csrf
@@ -423,18 +291,12 @@
 
                         <p id="postcode_error" class="text-center text-danger hidden"></p>
 
-                        <div id="otp" onSubmit="onSubmit(event)"
-                            class="inputs d-flex flex-row justify-content-center mt-2">
-                            <input class="m-1 text-center form-control rounded code-input" name="postcode_1"
-                                type="number" id="first" maxlength="1" required />
-                            <input class="m-1 text-center form-control rounded code-input" name="postcode_2"
-                                type="number" id="second" maxlength="1" required />
-                            <input class="m-1 text-center form-control rounded code-input" name="postcode_3"
-                                type="number" id="third" maxlength="1" required />
-                            <input class="m-1 text-center form-control rounded code-input" name="postcode_4"
-                                type="number" id="fourth" maxlength="1" required />
-                            <input class="m-1 text-center form-control rounded code-input" name="postcode_5"
-                                type="number" id="fifth" maxlength="1" required />
+                        <div id="otp" onSubmit="onSubmit(event)" class="inputs d-flex flex-row justify-content-center mt-2">
+                            <input class="m-1 text-center form-control rounded code-input" name="postcode_1" type="number" id="first" maxlength="1" required />
+                            <input class="m-1 text-center form-control rounded code-input" name="postcode_2" type="number" id="second" maxlength="1" required />
+                            <input class="m-1 text-center form-control rounded code-input" name="postcode_3" type="number" id="third" maxlength="1" required />
+                            <input class="m-1 text-center form-control rounded code-input" name="postcode_4" type="number" id="fourth" maxlength="1" required />
+                            <input class="m-1 text-center form-control rounded code-input" name="postcode_5" type="number" id="fifth" maxlength="1" required />
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -448,14 +310,12 @@
     <button hidden id="message-modal-btn" data-bs-toggle="modal" data-bs-target="#message-modal">
         Message Modal Button
     </button>
-    <div class="modal fade" id="message-modal" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="message-modal" aria-hidden="true">
+    <div class="modal fade" id="message-modal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="message-modal" aria-hidden="true">
         <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
 
-                    <i class="bi bi-x-lg" type="button" id="message-modal-close" class="btn-close"
-                        data-bs-dismiss="modal"></i>
+                    <i class="bi bi-x-lg" type="button" id="message-modal-close" data-bs-dismiss="modal"></i>
                 </div>
                 <div id="message-modal">
                     @csrf
@@ -468,8 +328,7 @@
 
                     </div>
                     <div class="modal-footer">
-                        <p><button type="submit" class="btn modal-btn-4" data-bs-dismiss="modal"
-                                value="Save">Stänga</button></p>
+                        <p><button type="submit" class="btn modal-btn-4" data-bs-dismiss="modal" value="Save">Stänga</button></p>
                     </div>
                 </div>
             </div>
@@ -481,18 +340,14 @@
 
     <!-- fixed bottom -->
     <div class="z-20 flex justify-center lg:justify-end w-full fixed bottom-20 lg:bottom-4 lg:right-4">
-        <button class=" rounded-full w-8 h-8 shadow-sm shadow-black text-white" style="background: #8cca76;"><a
-                href="#body"><i class="fa-solid fa-chevron-up"></i></a></button>
+        <button class=" rounded-full w-8 h-8 shadow-sm shadow-black text-white" style="background: #8cca76;"><a href="#body"><i class="fa-solid fa-chevron-up"></i></a></button>
     </div>
-    <div class="z-20 flex items-center fixed bottom-20 right-3 px-6 py-2 hover:bg-green-800 rounded-md text-white lg:left-4 lg:right-auto lg:bottom-4 shadow-sm shadow-green-700 whitespace-nowrap cursor-pointer"
-        style="background: #15803d;" id="ChatBtn">
+    <div class="z-20 flex items-center fixed bottom-20 right-3 px-6 py-2 hover:bg-green-800 rounded-md text-white lg:left-4 lg:right-auto lg:bottom-4 shadow-sm shadow-green-700 whitespace-nowrap cursor-pointer" style="background: #15803d;" id="ChatBtn">
         <i class="fa-solid fa-message mr-2"></i>
         <p class="text-sm">Chatt</p>
     </div>
 
-    <form action="{{ route('admin.message.store') }}" method="POST"
-        class="flex flex-col max-w-xs fixed bottom-0 right-3 rounded-t-lg lg:left-2 lg:right-auto shadow-sm shadow-black overflow-hidden z-30 hidden"
-        id="ChatBox">
+    <form action="{{ route('admin.message.store') }}" method="POST" class="flex flex-col max-w-xs fixed bottom-0 right-3 rounded-t-lg lg:left-2 lg:right-auto shadow-sm shadow-black overflow-hidden z-30 hidden" id="ChatBox">
         <div class="bg-[#007033] py-2 px-4 text-lg font-bold text-white flex justify-between">
             <h1>Chatt</h1>
             @csrf
@@ -504,13 +359,11 @@
             <div class="flex space-x-3">
                 <div>
                     <label for="fname" autofocus class=" font-semibold text-xs px-2">Förnamn</label>
-                    <input required type="text" id="chattinput_fname" name="fname"
-                        class="w-full border border-gray-400 rounded-md p-2">
+                    <input required type="text" id="chattinput_fname" name="fname" class="w-full border border-gray-400 rounded-md p-2">
                 </div>
                 <div>
                     <label for="lname" class="font-semibold text-xs px-2">Efternamn</label>
-                    <input required type="text" name="lname"
-                        class="w-full border border-gray-400 rounded-md p-2">
+                    <input required type="text" name="lname" class="w-full border border-gray-400 rounded-md p-2">
                 </div>
             </div>
             <div>
@@ -541,28 +394,21 @@
         </div>
     </form>
 
-    <div class=" z-20 bg-white fixed bottom-0 left-0 right-0 flex justify-evenly space-x-5 py-2 lg:hidden"
-        style=" box-shadow: 0 0 10px #c6c5c5;">
-        <a href="/"
-            class="m-0 flex flex-col justify-center items-center hover:text-green-600 active:text-green-600 cursor-pointer w-20">
+    <div class=" z-20 bg-white fixed bottom-0 left-0 right-0 flex justify-evenly space-x-5 py-2 lg:hidden" style=" box-shadow: 0 0 10px #c6c5c5;">
+        <a href="/" class="m-0 flex flex-col justify-center items-center hover:text-green-600 active:text-green-600 cursor-pointer w-20">
             <i class="fa-solid fa-home"></i>
             <p class="text-xs">Hem</p>
         </a>
-        <a href="javascript"
-            class="m-0 flex flex-col justify-center items-center hover:text-green-600 active:text-green-600 cursor-pointer w-20"
-            type="button" aria-controls="offcanvasExample" data-bs-toggle="offcanvas" data-bs-target="#side-nav">
+        <a href="javascript" class="m-0 flex flex-col justify-center items-center hover:text-green-600 active:text-green-600 cursor-pointer w-20" type="button" aria-controls="offcanvasExample" data-bs-toggle="offcanvas" data-bs-target="#side-nav">
             <i class="fa-solid fa-bars"></i>
             <p class="text-xs">Kategorier</p>
         </a>
-        <a
-            href="{{ route('favourites') }}"class=" hidden m-0 flex flex-col justify-center items-center hover:text-green-600 active:text-green-600 cursor-pointer w-20">
+        <a href="{{ route('favourites') }}"class=" hidden m-0 flex flex-col justify-center items-center hover:text-green-600 active:text-green-600 cursor-pointer w-20">
             <i class="fa-solid fa-heart"></i>
             <p class="text-xs">Favoriter</p>
         </a>
-        <label for="Shopping-cartbtn" data-bs-toggle="offcanvas" data-bs-target="#cart"
-            aria-controls="offcanvasRight" class="m-0 cart-open-1 cursor-pointer">
-            <div
-                class="m-0 flex flex-col relative justify-center items-center hover:text-green-600 active:text-green-600 cursor-pointer w-20">
+        <label for="Shopping-cartbtn" data-bs-toggle="offcanvas" data-bs-target="#cart" aria-controls="offcanvasRight" class="m-0 cart-open-1 cursor-pointer">
+            <div class="m-0 flex flex-col relative justify-center items-center hover:text-green-600 active:text-green-600 cursor-pointer w-20">
 
                 <!--<div class="px-2 py-1 bg-red-500 border-2 border-white text-white rounded-full text-xs font-semibold tracking-wider -mt-9 -ml-4 ">-->
 
@@ -575,10 +421,8 @@
         </label>
     </div>
 
-    <button id="staticBackdropBtn" class="btn btn-primary hidden" type="button" data-bs-toggle="offcanvas"
-        data-bs-target="#CookiePolicy" aria-controls="staticBackdrop">Toggle bottom offcanvas</button>
-    <div class="offcanvas offcanvas-bottom cookie-box" data-bs-backdrop="static" tabindex="-1" id="CookiePolicy"
-        aria-labelledby="staticBackdropLabel" style="height: 22rem">
+    <button id="staticBackdropBtn" class="btn btn-primary hidden" type="button" data-bs-toggle="offcanvas" data-bs-target="#CookiePolicy" aria-controls="staticBackdrop">Toggle bottom offcanvas</button>
+    <div class="offcanvas offcanvas-bottom cookie-box" data-bs-backdrop="static" tabindex="-1" id="CookiePolicy" aria-labelledby="staticBackdropLabel" style="height: 22rem">
         <div class="offcanvas-header d-flex justify-center">
             <h5 class="offcanvas-title text-[25px] text-center font-bold" id="offcanvasBottomLabel">Om cookies på
                 denna webbplats</h5>
@@ -591,17 +435,12 @@
                 analys och rikta annonsering. Vissa av dessa cookies är tredjepartscookies vilket innebär att dina
                 personuppgifter kan delas med en extern mottagare. För dessa cookies krävs ditt samtycke. För att förstå
                 mer om hur vi använder cookies, eller för information om hur du ändrar dina cookieinställningar, se vår
-                <span class="underline"><a class="text-[green]"
-                        href="{{ env('BASE_URL') }}Integritetspolicy">Integritetspolicy</a></span> och <span
-                    class="underline"><a class="text-[green]"
-                        href="{{ env('BASE_URL') }}cookiepolicy">cookiepolicy</a></span>.
+                <span class="underline"><a class="text-[green]" href="{{ env('BASE_URL') }}Integritetspolicy">Integritetspolicy</a></span> och <span class="underline"><a class="text-[green]" href="{{ env('BASE_URL') }}cookiepolicy">cookiepolicy</a></span>.
             </p>
         </div>
         <div class="cookies-buttons d-flex justify-center">
-            <button id="Accept-cookie-btn" data-bs-dismiss="offcanvas" aria-label="Close"
-                class="Accept-cookie-btn">Godkänn alla</button>
-            <button id="Reject-cookie-btn" data-bs-dismiss="offcanvas" aria-label="Close"
-                class="Reject-cookie-btn">Endast nödvändiga</button>
+            <button id="Accept-cookie-btn" data-bs-dismiss="offcanvas" aria-label="Close" class="Accept-cookie-btn">Godkänn alla</button>
+            <button id="Reject-cookie-btn" data-bs-dismiss="offcanvas" aria-label="Close" class="Reject-cookie-btn">Endast nödvändiga</button>
         </div>
     </div>
 

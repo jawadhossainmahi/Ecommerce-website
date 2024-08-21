@@ -73,7 +73,12 @@
             </li>
             <li class=" nav-item {{ request()->routeIs('admin.postcode.index') ? 'active' : '' }}"><a
                     href="{{ route('admin.postcode.index') }}"><i class="menu-livicon" data-icon="minus-alt"></i><span
-                        class="menu-title text-truncate" data-i18n="Postcode">Postnummer</span></a>
+                        class="menu-title text-truncate" data-i18n="Postcode">Privat postnummer</span></a>
+
+            </li>
+            <li class=" nav-item {{ request()->routeIs('admin.postcode.business') ? 'active' : '' }}"><a
+                    href="{{ route('admin.postcode.business') }}"><i class="menu-livicon" data-icon="minus-alt"></i><span
+                        class="menu-title text-truncate" data-i18n="Postcode">Företags postnummer</span></a>
 
             </li>
             <li class=" nav-item {{ request()->routeIs('admin.postnumber.index') ? 'active' : '' }}"><a

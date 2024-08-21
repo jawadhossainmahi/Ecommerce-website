@@ -1,10 +1,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous"
-        referrerpolicy="no-referrer" />
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <title>Livshem - billigt är bäst</title>
     <link rel="stylesheet" href="{{ asset('frontend/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/css/index.min.css') }}">
@@ -12,9 +9,7 @@
 
     <script src="{{ asset('frontend/js/index.min.js') }}"></script>
     <script src="{{ asset('frontend/js/tailwindcss.js') }}"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
-    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"/>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ asset('frontend/css/owl.carousel.css') }}" />
@@ -89,7 +84,130 @@
             border-radius: 50px;
         }
     </style>
+    <style>
+        * {
+            font-family: 'livshem-font';
+        }
 
+        .swiper-slide label {
+            width: 100%;
+        }
+
+        .select-day-card {
+            height: 8rem;
+        }
+
+        /* General Styling */
+        .loader-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 1rem;
+        }
+
+        html,
+        body {
+            /* margin: 0; */
+            height: 100%;
+        }
+
+        body {
+            display: grid;
+            /* grid-gap: 10px; */
+            grid-template-columns: 1fr;
+            grid-template-areas: "main" "footer";
+            grid-template-rows: 1fr 318px;
+        }
+
+        .main-content {
+            grid-area: main;
+        }
+
+        footer {
+            grid-area: footer;
+        }
+
+        @media (max-width: 567px) {
+            h1 {
+                font-size: 7vw;
+                text-align: center;
+            }
+        }
+
+        .sort-area {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .home-sortby {
+            width: 14%;
+            border-radius: 25px;
+        }
+
+        .home-sortby option {}
+
+        .sortby-dropdown {
+            margin-right: 0px;
+        }
+
+        .sortby-dropdown button {
+            color: #000 !important;
+            /* border-radius: 20px; */
+            padding: 5px 25px;
+            background: #FFF !important;
+        }
+
+        .sortby-dropdown ul {}
+
+        .sortby-dropdown ul li {}
+
+        .sortby-dropdown ul li a {
+            color: #000 !important;
+        }
+
+        .sortby-dropdown ul li a:hover {
+            background: none;
+        }
+
+        .sortby-dropdown .dropdown-menu::before {
+            border-bottom: 10px solid #fff;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            content: "";
+            display: block;
+            height: 0;
+            position: absolute;
+            right: 60px;
+            top: -10px;
+            width: 0;
+        }
+
+        .category-filter {
+            position: absolute;
+            right: 15px;
+            top: -33px;
+        }
+
+        .swiper-custom {
+            color: #268639 !important;
+            font-weight: bold;
+        }
+
+        .swiper-custom::after {
+            font-size: 30px !important;
+        }
+
+        @media(max-width:450px) {
+            .category-filter {
+                position: absolute;
+                right: 15px;
+                top: -33px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+{{--
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-FVRLL9N46K"></script>
@@ -103,5 +221,6 @@
 
         gtag('config', 'G-FVRLL9N46K');
     </script>
+--}}
 
 </head>

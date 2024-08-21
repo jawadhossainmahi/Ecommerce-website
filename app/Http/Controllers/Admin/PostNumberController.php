@@ -30,7 +30,7 @@ class PostNumberController extends Controller
         $request->validate([
             'email' =>  'email',
         ]);
-        // dd($request);
+
         $email = $request->email;
 
         // Remove the element with "name" equal to "_token" from the data array

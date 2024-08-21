@@ -402,14 +402,15 @@
                         <p id="transport-fee" style="color: black;font-size: 1rem !important;font-weight: 600 !important;"></p>
                     </div>
 
-                    {{-- <div class="side-cart-total checkout-taxs">
-                        <h2>Varav 12% moms</h2>
-                        <h2 id="tax_12%"></h2>
+                    {{--<div class="side-cart-total checkout-taxs">
+                        <h3 style="font-size: 1rem !important">Varav 12% moms</h3>
+                        <h3 id="tax_12_percent" style="font-size: 1rem !important"></h3>
                     </div>
                     <div class="side-cart-total checkout-taxs">
-                        <h2>Varav 25% moms</h2>
-                        <h2 id="tax_25%"></h2>
-                    </div> --}}
+                        <h3 style="font-size: 1rem !important">Varav 25% moms</h3>
+                        <h3 id="tax_25_percent" style="font-size: 1rem !important"></h3>
+                    </div>--}}
+
                     <div class="side-cart-total checkout-taxs">
                         <h2 style="font-size: 1rem !important">Total moms</h2>
                         <h2 id="tax_total" style="font-size: 1rem !important"></h2>
@@ -965,7 +966,7 @@
                                 <img src="{{ asset('frontend/images/klarna.png') }}" alt="klarna-logo"
                                     class="w-[120px] p-2 rounded-md ">
                             </li>
-                            {{-- <li class="text-center text-3xl space-x-4 my-4"> 
+                            {{-- <li class="text-center text-3xl space-x-4 my-4">
                 <i class="fa-regular fa-credit-card hover:text-green-500"></i>
                 <i class="fa-brands fa-cc-paypal hover:text-green-500"></i>
                 <i class="fa-brands fa-cc-mastercard hover:text-green-500"></i>

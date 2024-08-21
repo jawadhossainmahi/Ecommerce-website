@@ -20,7 +20,7 @@
             <div class="content-header row">
                 <div class="content-header-left col-12 mb-2 mt-1">
                     <div class="breadcrumbs-top">
-                        <h5 class="content-header-title float-left pr-1 mb-0">Postnummer</h5>
+                        <h5 class="content-header-title float-left pr-1 mb-0">{{ $pageTitle }}</h5>
                         <div class="breadcrumb-wrapper d-none d-sm-block">
                             <ol class="breadcrumb p-0 mb-0 pl-1">
                                 <li class="breadcrumb-item"><a href="/"><i class="bx bx-home-alt"></i></a>
@@ -189,9 +189,7 @@
         });
     </script>
     <!--bootstrap script-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <!--jquery-->
     <script>
         $(document).ready(function() {

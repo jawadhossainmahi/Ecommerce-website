@@ -1,16 +1,5 @@
 import { BASE_URL } from "../../env.js";
 
-// try{
-//     BASE_URL;
-// }
-// catch(e) {
-//     if(e.name == "ReferenceError") {
-//         BASE_URL = "https://www.livshem.se/"
-
-//         // For local development uncomment
-//         BASE_URL = "http://localhost:8000/"
-//     }
-// }
 let PageModal = document.getElementById("all-preview-modals");
 function searchProducts(data, id) {
     for (let i = 0; i < data.length; i++) {
@@ -26,8 +15,12 @@ function getCartData() {
     $.ajax({
         url: BASE_URL + "api/cart/update",
         type: "POST",
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
         data: {
             cart: JSON.stringify(cart),
+            _token:  $('meta[name="csrf-token"]').attr("content"),
         },
         success: function (data) {
             // console.log(data)
@@ -127,14 +120,14 @@ function saveCartToSessionForBusiness() {
             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
         },
         success: function (data) {
-            
+
             localStorage.setItem("cart", "[]")
             localStorage.removeItem('delivery_datetime')
 
             // window.location.replace("/");
 
             $(document).ready(function(){
-                $('#purchaseModal').modal('show'); 
+                $('#purchaseModal').modal('show');
             })
         },
     });
@@ -271,7 +264,7 @@ function getCheckoutDeliveryAddress(id) {
                     <p>${data.phone}</p>
                     `;
                 }
-                
+
                 selected_address.innerHTML = address;
             }
         },

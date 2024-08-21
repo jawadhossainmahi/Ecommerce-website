@@ -159,87 +159,85 @@ class CartController extends Controller
     }
     public function insertBusinessOrder(Request $request)
     {
-//         cart: cart,
-//         customer_type: 'business',
-//         delivery_address: delivery_address,
-//         billing_address: billing_address,
-//         name_of_recipient: name_of_recipient,
-//         delivery_datetime: delivery_datetime,
-
-        
-// Full texts
-// id	
-// custom_order_id Descending 1	
-// status	
-// user_id	
-// delivery_address_id	
-// delivery_time_id	
-// total_price	
-// sub_total	
-// sub_total_deposit	
-// discount	
-// discount_code	
-// coupon_discount	
-// transport_tax	
-// recurring_delivery	
-// leave_outside	
-// message	
-// created_at	
-// updated_at
+        //         cart: cart,
+        //         customer_type: 'business',
+        //         delivery_address: delivery_address,
+        //         billing_address: billing_address,
+        //         name_of_recipient: name_of_recipient,
+        //         delivery_datetime: delivery_datetime,
 
 
-try{
+        // Full texts
+        // id
+        // custom_order_id Descending 1
+        // status
+        // user_id
+        // delivery_address_id
+        // delivery_time_id
+        // total_price
+        // sub_total
+        // sub_total_deposit
+        // discount
+        // discount_code
+        // coupon_discount
+        // transport_tax
+        // recurring_delivery
+        // leave_outside
+        // message
+        // created_at
+        // updated_at
 
-        $cartData = json_decode($request->cart);
-        $orderID = uniqid();
 
-        $details = [];
-        $total = 0;
+        try {
 
-        foreach($cartData as $cart){
+            $cartData = json_decode($request->cart);
+            $orderID = uniqid();
 
-            if(!empty($cart->products)){
+            $details = [];
+            $total = 0;
 
-                foreach($cart->products as $product){
-                    $details[] = [
-                        'product_id' => $product->item_id,
-                        'order_id' => $orderID,
-                        'qty' => $product->quantity
-                    ];
+            foreach ($cartData as $cart) {
 
-                    $total += ($product->quantity * $product->item_price);
+                if (!empty($cart->products)) {
+
+                    foreach ($cart->products as $product) {
+                        $details[] = [
+                            'product_id' => $product->item_id,
+                            'order_id' => $orderID,
+                            'qty' => $product->quantity
+                        ];
+
+                        $total += ($product->quantity * $product->item_price);
+                    }
                 }
             }
+
+            $dTime = $request->delivery_datetime;
+
+            $deliveryTime = new DeliveryTime();
+            $deliveryTime->date =  $dTime->delivery_date;
+            $deliveryTime->start_time =  $dTime->start_time;
+            $deliveryTime->end_time =  $dTime->end_time;
+            $deliveryTime->no_of_orders = 1;
+
+            $order = new Orders();
+            $order->custom_order_id = $orderID;
+            $order->status = 1;
+            $order->user_id = auth()->user()->id;
+            $order->delivery_address_id = $request->delivery_address;
+            $order->delivery_time_id = $deliveryTime->id;
+            $order->billing_address_id = $request->billing_address;
+            $order->total_price =  $total;
+            $order->save();
+
+
+            $order->getorder()->createMany($details);
+
+            return response(200);
+        } catch (\Exception $e) {
+            return response(500);
         }
-
-        $dTime = $request->delivery_datetime;
-
-        $deliveryTime = new DeliveryTime();
-        $deliveryTime->date =  $dTime->delivery_date;
-        $deliveryTime->start_time =  $dTime->start_time;
-        $deliveryTime->end_time =  $dTime->end_time;
-        $deliveryTime->no_of_orders = 1;
-
-        $order = new Orders();
-        $order->custom_order_id = $orderID;
-        $order->status = 1;
-        $order->user_id = auth()->user()->id;
-        $order->delivery_address_id = $request->delivery_address;
-        $order->delivery_time_id = $deliveryTime->id;
-        $order->billing_address_id = $request->billing_address;
-        $order->total_price =  $total;
-        $order->save();
-
-
-        $order->getorder()->createMany($details);
-
-        return response(200);
-
-    } catch (\Exception $e)
-    {
-        return response(500);
     }
-}
 
     public function insertInCart($cartData)
     {
@@ -323,6 +321,4 @@ try{
         }
         return response()->json($_SESSION);
     }
-
-    
 }

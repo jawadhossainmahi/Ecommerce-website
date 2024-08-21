@@ -178,7 +178,7 @@ class CheckoutController extends Controller
             //     "confirmation" => "https://livsham.softwarebyte.co/",
             //     "push" => "https://livsham.softwarebyte.co/"
             // ]
-            
+
         ];
         if (isset($_SESSION['recurring_delivery'])) {
 
@@ -225,9 +225,13 @@ class CheckoutController extends Controller
 
 
         $response = Http::withHeaders(['Authorization' => env("KLARNA_KEY"), "Content-Type" => "application/json"])->post(env("KLARNA_ENVIRONMENT") . 'checkout/v3/orders', $data);
-        // dd(json_encode($data));
+        $klarna_order = (object)($response->json()??[]);
 
-        return view('frontend.klarna-payment', ['klarna_order' => json_decode($response->body())]);
+        if (!isset($klarna_order->html_snippet)) {
+            return back()->with('danger', "Failed to initiate payments!");
+        }
+
+        return view('frontend.klarna-payment', ['klarna_order' => $klarna_order]);
     }
     public function order_email()
     {
@@ -235,7 +239,6 @@ class CheckoutController extends Controller
         $list = Orders::where('user_id', auth()->user()->id)->with(['getorder' => function ($query) {
             $query->with('getproduct');
         }])->get();
-        $list;
 
         $order = [
             'title' => 'Välkommen till Livshem',

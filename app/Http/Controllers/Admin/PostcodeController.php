@@ -15,65 +15,64 @@ class PostcodeController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $list = Postcode::orderByDesc('created_at')->get();
-        //  $list = Postcode::get();
-        return view('backend.admin.postcode.index', get_defined_vars());
+        return view('backend.admin.postcode.index', [
+            'pageTitle' => "Privat postnummer",
+            'list' => Postcode::where('type', 'private')->latest('id')->get(),
+        ]);
+    }
+
+    public function business()
+    {
+        return view('backend.admin.postcode.index', [
+            'pageTitle' => "Företags postnummer",
+            'list' => Postcode::where('type', 'business')->latest('id')->get(),
+        ]);
     }
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function create()
     {
-        return view('backend.admin.postcode.create', get_defined_vars());
+        return view('backend.admin.postcode.create');
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
         $request->validate([
-            'postcode'        => 'required|regex:/(^[0-9]{5}$)/u',
+            'postcode' => 'required|regex:/(^[0-9]{5}$)/u',
         ]);
-        // customer request 
-        $postcoderequest = PostNumber::where('postcode', $request->postcode)->get();
-        if ($postcoderequest != "") {
-            foreach ($postcoderequest as $users) {
+        // customer request
+        $postcodeCheck = Postcode::where(['postcode' => $request->postcode, 'type' => $request->type])->count() > 0;
+        if ($postcodeCheck) {
+            return redirect()->route('admin.postcode.create')->with('warning', "Postcode already exists!");
+        }
 
+        $postcode = new Postcode();
+        $postcode->postcode = $request->postcode;
+        $postcode->type = $request->type;
+        $postcode->save();
 
-                $postcode = new Postcode();
-                $postcode->postcode = $users->postcode;
-                $postcode->save();
-                $postrequest = PostNumber::where('postcode', $request->postcode)->delete();
+        $postcodeRequest = PostNumber::where('postcode', $request->postcode)->get();
+        if ($postcodeRequest->count() > 0) {
+            foreach ($postcodeRequest as $users) {
+                PostNumber::where('postcode', $request->postcode)->delete();
                 Mail::to($users->email)->send(new ApprovePostRequest($request, $postcode));
             }
             return redirect()->route('admin.postcode.index')->with('message', "Data Added Successfully!");
         }
-        // new create 
-        $postcode = new Postcode();
-        $postcode->postcode = $request->postcode;
-        $postcode->save();
-
 
         return redirect()->route('admin.postcode.index')->with('message', "Data Added Successfully!");
     }
 
     /**
      * Display the specified resource.
-     *
-     * @param  \App\Models\postcode  $postcode
-     * @return \Illuminate\Http\Response
      */
     public function show(Postcode $postcode)
     {
@@ -82,22 +81,16 @@ class PostcodeController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\postcode  $postcode
-     * @return \Illuminate\Http\Response
      */
     public function edit(Postcode $postcode)
     {
-        $postcode = Postcode::where('id', $postcode->id)->get();
-        return view('backend.admin.postcode.edit', get_defined_vars());
+        return view('backend.admin.postcode.edit', [
+            'postcode' => Postcode::where('id', $postcode->id)->get()
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\postcode  $postcode
-     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Postcode $postcode)
     {
@@ -112,9 +105,6 @@ class PostcodeController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\postcode  $postcode
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Postcode $postcode)
     {
@@ -166,8 +156,9 @@ class PostcodeController extends Controller
         }
     }
 
-    public function find_postcode($postcode){
-        $data_postcode = Postcode::where("postcode",$postcode)->get();
+    public function find_postcode($postcode)
+    {
+        $data_postcode = Postcode::where("postcode", $postcode)->get();
         return response()->json($data_postcode);
     }
 }

@@ -79,7 +79,15 @@ class HomeController extends Controller
         ]);
         $postcode = $request->postcode_1 . $request->postcode_2 . $request->postcode_3 . $request->postcode_4 . $request->postcode_5;
 
-        $check = Postcode::where('postcode', $postcode)->first();
+        if (Auth::check()) {
+            if (Auth::user()->status == 1) {
+                $check = Postcode::where('postcode', $postcode)->where('type', 'business')->first();
+            } else {
+                $check = Postcode::where('postcode', $postcode)->where('type', 'private')->first();
+            }
+        } else {
+            $check = Postcode::where('postcode', $postcode)->where('type', 'private')->first();
+        }
 
         if ($check) {
             $_SESSION['postcode'] = $postcode;

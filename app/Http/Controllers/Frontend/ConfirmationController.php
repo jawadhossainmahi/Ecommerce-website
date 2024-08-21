@@ -110,14 +110,15 @@ class ConfirmationController extends Controller
                 $order_details->save();
             };
 
-            try{
+            try {
                 if (auth()->check()) {
                     Mail::to(auth()->user()->email)->send(new ConfirmationEmail($order->id));
                 } else {
                     Mail::to($order->getdeliveryaddress->email)->send(new ConfirmationEmail($order->id));
                 }
                 Mail::to(env("MAIL_BCC_ADDRESS"))->send(new ConfirmationEmail($order->id, true));
-            }catch(\Exception $e){}
+            } catch (\Exception $e) {
+            }
 
 
             $clear_cart = true;
@@ -129,7 +130,6 @@ class ConfirmationController extends Controller
 
     public function businessOrderConfirmation(Request $request)
     {
-
         if (session_status() === PHP_SESSION_NONE) session_start();
 
         $categories = Category::get();
@@ -138,25 +138,24 @@ class ConfirmationController extends Controller
         $error = [];
         $orderID = uniqid();
         $maxId = Orders::max('custom_order_id');
-        if($maxId){
-            $customId = "LH". str_pad(substr($maxId, 2) + 1, 6, "0", STR_PAD_LEFT);
-        }else{
-            $customId = "LH". str_pad(1000, 6, "0", STR_PAD_LEFT);
+        if ($maxId) {
+            $customId = "LH" . str_pad(substr($maxId, 2) + 1, 6, "0", STR_PAD_LEFT);
+        } else {
+            $customId = "LH" . str_pad(1000, 6, "0", STR_PAD_LEFT);
         }
 
         $cartData = json_decode($request['cart']);
 
-        if(!empty($cartData))
-        {
+        if (!empty($cartData)) {
 
 
             $details = [];
             $total = 0;
-            foreach($cartData as $cart){
+            foreach ($cartData as $cart) {
 
-                if(!empty($cart->products)){
+                if (!empty($cart->products)) {
 
-                    foreach($cart->products as $product){
+                    foreach ($cart->products as $product) {
                         $details[] = [
                             'product_id' => $product->item_id,
                             'order_id' => $orderID,
@@ -171,79 +170,79 @@ class ConfirmationController extends Controller
             $total += (auth()->user()->customer_type == 1) ? 0 : 95;
 
 
-                $deliverytimesession = json_decode($request['delivery_datetime']);
-                $deliverytime = DeliveryTime::where('date', $deliverytimesession->delivery_date)
-                    ->where('start_time', $deliverytimesession->start_time)
-                    ->where('end_time', $deliverytimesession->end_time)->first();
+            $deliverytimesession = json_decode($request['delivery_datetime']);
+            $deliverytime = DeliveryTime::where('date', $deliverytimesession->delivery_date)
+                ->where('start_time', $deliverytimesession->start_time)
+                ->where('end_time', $deliverytimesession->end_time)->first();
 
-                if ($deliverytime) {
-                    if ($deliverytime->no_of_orders >= 4) {
-                        $deliverytime->status = 0;
-                    }
-                    $deliverytime->no_of_orders = $deliverytime->no_of_orders + 1;
-                    $deliverytime->save();
+            if ($deliverytime) {
+                if ($deliverytime->no_of_orders >= 4) {
+                    $deliverytime->status = 0;
+                }
+                $deliverytime->no_of_orders = $deliverytime->no_of_orders + 1;
+                $deliverytime->save();
+            } else {
+
+                $deliverytime = new DeliveryTime();
+                $deliverytime->start_time = $deliverytimesession->start_time;
+                $deliverytime->end_time = $deliverytimesession->end_time;
+                $deliverytime->date = $deliverytimesession->delivery_date;
+                $deliverytime->status = 1;
+                $deliverytime->no_of_orders = 1;
+                $deliverytime->save();
+            }
+
+            $order = new Orders();
+            $order->id = $orderID;
+            $order->custom_order_id = $customId;
+            $order->user_id = (auth()->user()) ? auth()->user()->id : null;
+
+
+            if (isset($_SESSION['recurring_delivery'])) {
+                $order->recurring_delivery = $_SESSION['recurring_delivery'];
+                unset($_SESSION['recurring_delivery']);
+            }
+            if (isset($_SESSION['message'])) {
+                $order->message = $_SESSION['message'];
+                unset($_SESSION['message']);
+            }
+            if (isset($_SESSION['leave_outside'])) {
+                $order->leave_outside = $_SESSION['leave_outside'];
+                unset($_SESSION['leave_outside']);
+            }
+            if (isset($request['delivery_address'])) {
+                $delivery = DeliveryAddress::where('id', $request['delivery_address'])->first();
+                $delivery->name_of_recipient = $request['name_of_recipient'] ?? null;
+                $delivery->update();
+            }
+
+            $order->status = 0;
+            $order->delivery_address_id = $request['delivery_address'] ?? null;
+            $order->delivery_time_id = $deliverytime->id;
+            $order->billing_address_id = $request['billing_address'] ?? null;
+            $order->total_price =  $total;
+            $order->save();
+
+            $order->getorder()->createMany($details);
+
+            try {
+                if (auth()->check()) {
+                    Mail::to(auth()->user()->email)->send(new ConfirmationEmail($order->id));
                 } else {
-
-                    $deliverytime = new DeliveryTime();
-                    $deliverytime->start_time = $deliverytimesession->start_time;
-                    $deliverytime->end_time = $deliverytimesession->end_time;
-                    $deliverytime->date = $deliverytimesession->delivery_date;
-                    $deliverytime->status = 1;
-                    $deliverytime->no_of_orders = 1;
-                    $deliverytime->save();
+                    Mail::to($order->getdeliveryaddress->email)->send(new ConfirmationEmail($order->id));
                 }
-
-                $order = new Orders();
-                $order->id = $orderID;
-                $order->custom_order_id = $customId;
-                $order->user_id = (auth()->user()) ? auth()->user()->id : null;
-
-
-                if (isset($_SESSION['recurring_delivery'])) {
-                    $order->recurring_delivery = $_SESSION['recurring_delivery'];
-                    unset($_SESSION['recurring_delivery']);
+                if (env("MAIL_BCC_ADDRESS")) {
+                    Mail::to(env("MAIL_BCC_ADDRESS"))->send(new ConfirmationEmail($order->id, true));
                 }
-                if (isset($_SESSION['message'])) {
-                    $order->message = $_SESSION['message'];
-                    unset($_SESSION['message']);
-                }
-                if (isset($_SESSION['leave_outside'])) {
-                    $order->leave_outside = $_SESSION['leave_outside'];
-                    unset($_SESSION['leave_outside']);
-                }
-                if (isset($request['delivery_address'])) {
-                    $delivery = DeliveryAddress::where('id', $request['delivery_address'])->first();
-                    $delivery->name_of_recipient = $request['name_of_recipient']??null;
-                    $delivery->update();
-                }
+            } catch (\Exception $e) {
+            }
 
-                $order->status = 0;
-                $order->delivery_address_id = $request['delivery_address']??null;
-                $order->delivery_time_id = $deliverytime->id;
-                $order->billing_address_id = $request['billing_address']??null;
-                $order->total_price =  $total;
-                $order->save();
-
-                $order->getorder()->createMany($details);
-
-                try{
-                    if (auth()->check()) {
-                        Mail::to(auth()->user()->email)->send(new ConfirmationEmail($order->id));
-                    } else {
-                        Mail::to($order->getdeliveryaddress->email)->send(new ConfirmationEmail($order->id));
-                    }
-                    if(env("MAIL_BCC_ADDRESS")){
-                        Mail::to(env("MAIL_BCC_ADDRESS"))->send(new ConfirmationEmail($order->id, true));
-                    }
-                }catch(\Exception $e){}
-                
-                $clear_cart = true;
+            $clear_cart = true;
         }
 
         unset($_SESSION['cart']);
 
         return response(200);
-    
     }
 
     // public function emailtest()

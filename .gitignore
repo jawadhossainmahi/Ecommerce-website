@@ -1,32 +1,22 @@
-# /.phpunit.cache
-# /node_modules
-# /public/build
-# /public/hot
-# /public/storage
-# /public/env.js
-# /storage/*.key
-# /vendor
+/.phpunit.cache
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/public/env.js
+/storage/*.key
+/vendor
 .env
-# .env.backup
-# .env.production
-# .phpunit.result.cache
-# Homestead.json
-# Homestead.yaml
-# auth.json
-# npm-debug.log
-# yarn-error.log
-# /.fleet
-# /.idea
-# /.vscode
-final_work
-final_work.zip
-final_work_part_2.zip
-git_upload.zip
-public_backup.zip
-public.zip
-vendor.zip
-demo.zip
-DemoBackup.zip
-livshem_milestone_1.zip
-milestone2-1.zip
-mini_files.zip
+.env.backup
+.env.production
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+auth.json
+npm-debug.log
+yarn-error.log
+/.fleet
+/.idea
+/.vscode
+
+Ecommerce-website

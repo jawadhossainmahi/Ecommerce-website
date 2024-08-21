@@ -1,0 +1,182 @@
+@font-face {
+    font-family: 'Buenos Aires';
+    src: url('BuenosAires-Bold.eot');
+    src: local('Buenos Aires Bold'), local('BuenosAires-Bold'),
+        url('BuenosAires-Bold.eot?#iefix') format('embedded-opentype'),
+        url('BuenosAires-Bold.woff2') format('woff2'),
+        url('BuenosAires-Bold.woff') format('woff'),
+        url('BuenosAires-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Buenos Aires';
+    src: url('BuenosAires-LightItalic.eot');
+    src: local('Buenos Aires Light Italic'), local('BuenosAires-LightItalic'),
+        url('BuenosAires-LightItalic.eot?#iefix') format('embedded-opentype'),
+        url('BuenosAires-LightItalic.woff2') format('woff2'),
+        url('BuenosAires-LightItalic.woff') format('woff'),
+        url('BuenosAires-LightItalic.ttf') format('truetype');
+    font-weight: 300;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Buenos Aires';
+    src: url('BuenosAires-Regular.eot');
+    src: local('Buenos Aires Regular'), local('BuenosAires-Regular'),
+        url('BuenosAires-Regular.eot?#iefix') format('embedded-opentype'),
+        url('BuenosAires-Regular.woff2') format('woff2'),
+        url('BuenosAires-Regular.woff') format('woff'),
+        url('BuenosAires-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Buenos Aires';
+    src: url('BuenosAires-BoldItalic.eot');
+    src: local('Buenos Aires Bold Italic'), local('BuenosAires-BoldItalic'),
+        url('BuenosAires-BoldItalic.eot?#iefix') format('embedded-opentype'),
+        url('BuenosAires-BoldItalic.woff2') format('woff2'),
+        url('BuenosAires-BoldItalic.woff') format('woff'),
+        url('BuenosAires-BoldItalic.ttf') format('truetype');
+    font-weight: bold;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Buenos Aires';
+    src: url('BuenosAires-SemiBold.eot');
+    src: local('Buenos Aires SemiBold'), local('BuenosAires-SemiBold'),
+        url('BuenosAires-SemiBold.eot?#iefix') format('embedded-opentype'),
+        url('BuenosAires-SemiBold.woff2') format('woff2'),
+        url('BuenosAires-SemiBold.woff') format('woff'),
+        url('BuenosAires-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Buenos Aires';
+    src: url('BuenosAires-SemiBoldItalic.eot');
+    src: local('Buenos Aires SemiBold Italic'), local('BuenosAires-SemiBoldItalic'),
+        url('BuenosAires-SemiBoldItalic.eot?#iefix') format('embedded-opentype'),
+        url('BuenosAires-SemiBoldItalic.woff2') format('woff2'),
+        url('BuenosAires-SemiBoldItalic.woff') format('woff'),
+        url('BuenosAires-SemiBoldItalic.ttf') format('truetype');
+    font-weight: 600;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Buenos Aires';
+    src: url('BuenosAires-Thin.eot');
+    src: local('Buenos Aires Thin'), local('BuenosAires-Thin'),
+        url('BuenosAires-Thin.eot?#iefix') format('embedded-opentype'),
+        url('BuenosAires-Thin.woff2') format('woff2'),
+        url('BuenosAires-Thin.woff') format('woff'),
+        url('BuenosAires-Thin.ttf') format('truetype');
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Buenos Aires';
+    src: url('BuenosAires-ThinItalic.eot');
+    src: local('Buenos Aires Thin Italic'), local('BuenosAires-ThinItalic'),
+        url('BuenosAires-ThinItalic.eot?#iefix') format('embedded-opentype'),
+        url('BuenosAires-ThinItalic.woff2') format('woff2'),
+        url('BuenosAires-ThinItalic.woff') format('woff'),
+        url('BuenosAires-ThinItalic.ttf') format('truetype');
+    font-weight: 100;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Buenos Aires';
+    src: url('BuenosAires-Book.eot');
+    src: local('Buenos Aires Book'), local('BuenosAires-Book'),
+        url('BuenosAires-Book.eot?#iefix') format('embedded-opentype'),
+        url('BuenosAires-Book.woff2') format('woff2'),
+        url('BuenosAires-Book.woff') format('woff'),
+        url('BuenosAires-Book.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Buenos Aires';
+    src: url('BuenosAires-BookItalic.eot');
+    src: local('Buenos Aires Book Italic'), local('BuenosAires-BookItalic'),
+        url('BuenosAires-BookItalic.eot?#iefix') format('embedded-opentype'),
+        url('BuenosAires-BookItalic.woff2') format('woff2'),
+        url('BuenosAires-BookItalic.woff') format('woff'),
+        url('BuenosAires-BookItalic.ttf') format('truetype');
+    font-weight: 300;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Buenos Aires';
+    src: url('BuenosAires-Light.eot');
+    src: local('Buenos Aires Light'), local('BuenosAires-Light'),
+        url('BuenosAires-Light.eot?#iefix') format('embedded-opentype'),
+        url('BuenosAires-Light.woff2') format('woff2'),
+        url('BuenosAires-Light.woff') format('woff'),
+        url('BuenosAires-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Buenos Aires';
+    src: url('BuenosAires-Black.eot');
+    src: local('Buenos Aires Black'), local('BuenosAires-Black'),
+        url('BuenosAires-Black.eot?#iefix') format('embedded-opentype'),
+        url('BuenosAires-Black.woff2') format('woff2'),
+        url('BuenosAires-Black.woff') format('woff'),
+        url('BuenosAires-Black.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Buenos Aires';
+    src: url('BuenosAires-BlackItalic.eot');
+    src: local('Buenos Aires Black Italic'), local('BuenosAires-BlackItalic'),
+        url('BuenosAires-BlackItalic.eot?#iefix') format('embedded-opentype'),
+        url('BuenosAires-BlackItalic.woff2') format('woff2'),
+        url('BuenosAires-BlackItalic.woff') format('woff'),
+        url('BuenosAires-BlackItalic.ttf') format('truetype');
+    font-weight: 900;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Buenos Aires';
+    src: url('BuenosAires-RegularItalic.eot');
+    src: local('Buenos Aires Regular Italic'), local('BuenosAires-RegularItalic'),
+        url('BuenosAires-RegularItalic.eot?#iefix') format('embedded-opentype'),
+        url('BuenosAires-RegularItalic.woff2') format('woff2'),
+        url('BuenosAires-RegularItalic.woff') format('woff'),
+        url('BuenosAires-RegularItalic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+

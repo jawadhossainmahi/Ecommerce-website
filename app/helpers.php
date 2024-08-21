@@ -4,10 +4,6 @@ use App\Models\User;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 
-
-
-
-
 if (!function_exists("api_data_format")) {
     function api_data_format($products, $id = 0)
     {
@@ -97,7 +93,7 @@ if (!function_exists("api_data_format")) {
                 'status' => $product->status,
                 'weight' => $product->weight,
                 'item_status' => $product->item_status,
-                'tax'=>$product->tax,
+                'tax' => $product->tax,
                 'discount_price' => $product->discount_price,
 
             ];
@@ -148,7 +144,6 @@ if (!function_exists("order_details")) {
         $totalTaxAmt12 = 0;
         $totalTaxAmt25 = 0;
 
-
         foreach ($order->getorder as $item) {
 
             $product = $item->getproduct;
@@ -198,22 +193,23 @@ if (!function_exists("order_details")) {
             }
 
             //Tax Calculation
-            if($product->tax == 25){
-                $totalTaxAmt25 += (format_price($product->discount_price > 0 ? $product->discount_price : $product->price));
-            }else{
-                $totalTaxAmt12 += (format_price($product->discount_price > 0 ? $product->discount_price : $product->price) + format_price($product->pant) );
+            if ($product->tax == 25) {
+                $totalTaxAmt25 += (format_price($product->discount_price > 0 ? $product->discount_price : $product->price)) * $quantity;
+            }
+            if ($product->tax == 12) {
+                $totalTaxAmt12 += (format_price($product->discount_price > 0 ? $product->discount_price : $product->price) + format_price($product->pant)) * $quantity;
             }
         }
 
         //Add Shipment Cost Tax
-        if($order->total_price - 95 < 650){
+        if (($order->total_price - 95) < 650) {
             $totalTaxAmt12 += (($order->getuser->customer_type == 1) ? 0 : 95);
         }
 
-        $totalTaxAmt12 = $totalTaxAmt12 - ($totalTaxAmt12/1.12);
-        $totalTaxAmt25 = $totalTaxAmt25 - ( $totalTaxAmt25/1.25);
-        
-        return [$discount_without_coupons, $total, $total_discount, $tax, $totalTaxAmt12, $totalTaxAmt25];
+        $totalTaxAmt12 = $totalTaxAmt12 - ($totalTaxAmt12 / 1.12);
+        $totalTaxAmt25 = $totalTaxAmt25 - ($totalTaxAmt25 / 1.25);
+
+        return [$discount_without_coupons ?? 0, $total ?? 0, $total_discount ?? 0, $tax ?? 0, $totalTaxAmt12 ?? 0, $totalTaxAmt25 ?? 0];
     }
 }
 
@@ -225,14 +221,13 @@ if (!function_exists("filterStringToArray")) {
         $title = preg_replace('![-\s]+!u', '-', $title);
         $res = explode('-', $title);
 
-        if(count($res) == 2){
-            $space = str_replace('-',' ', $title);
+        if (count($res) == 2) {
+            $space = str_replace('-', ' ', $title);
             $rev = implode(" ", array_reverse($res));
             return array_unique([$data, $title, $space, $rev]);
+        } else if (count($res) > 2) {
 
-        }else if(count($res) > 2){
-
-            $space = str_replace('-',' ', $title);
+            $space = str_replace('-', ' ', $title);
             $rev = implode(" ", array_reverse($res));
             $new = $res[0] . "-" . $res[1] . " " . $res[2];
             return array_unique([$data, $title, $space, $rev, $new]);
@@ -244,14 +239,14 @@ if (!function_exists("filterStringToArray")) {
 if (!function_exists("popularProductPoint")) {
     function popularProductPoint($product_id = false, $type = "open")
     {
-        if($product_id){
+        if ($product_id) {
             $point = match ($type) {
                 'open' => 1,
                 'cart' => 2,
                 'purchase' => 3,
                 default => 0
             };
-            Product::find($product_id)->increment('popularity', $point);
+            Product::find($product_id)?->increment('popularity', $point);
             // DB::table('products')->where('id', $product_id)->first()->increment('popularity');
         }
     }

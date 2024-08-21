@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DataTableHelper;
 use finfo;
+use Illuminate\Support\Facades\Blade;
 use Throwable;
 use App\Models\Tag;
 use App\Models\Origin;
@@ -34,21 +36,68 @@ class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return $product_category = SubCategory::where('category_id', $request->id)->orderByDesc('created_at')->get();
-            return $product_sub_category = SubSubCat::where('sub_cat_id', $request->id)->orderByDesc('created_at')->get();
+            $list = Product::with(['image', 'getcategory', 'gettag', 'getsubcategory.getsubsubcategory'])
+                ->orderByDesc('created_at');
+
+            return DataTableHelper::create($list)
+                ->addAutoIndex()
+                ->ignoreInQuery(['image', 'category_name', 'tag_name'])
+                ->columns(function ($row) {
+                    $image_html = <<<'HTML'
+                        <div style="position: relative;">
+                            {{-- <a href="{{ route('image.delete',['proimage'=>$image->id]) }}">
+                                <i class="fa fa-times" aria-hidden="true" style="position: absolute; left: 41px; "></i>
+                            </a> --}}
+                            <img loading="lazy" src="{{ asset($row->image ? $row->image->path : 'frontend/images/no-item.png') }}" width="50px" height="40px" alt="">
+                        </div>
+HTML;
+                    $status_color = match ($row->status) {
+                        'Out Of Stock' => 'danger',
+                        'In Stock' => 'success',
+                        default => 'warning',
+                    };
+                    $action_html = <<<'HTML'
+                        <a href="{{ route('admin.product.edit', ['product' => $row->id]) }}">
+                            <i class="bx bx-edit-alt" style="color: green;"></i>
+                        </a>
+                        <a href="{{ route('admin.product.destroy', ['product' => $row->id]) }}"
+                                            onclick="return confirm('Are You Sure To Delete This  ?')">
+                            <i class="bx bx-trash-alt" style="color: green;"></i>
+                        </a>
+HTML;
+
+                    return [
+                        "checkbox" => Blade::render('<input type="checkbox" name="ids" class="checkeds" value="{{ $id }}">', $row->only('id')),
+                        "id" => $row->id,
+                        "name" => $row->name,
+                        "image" => Blade::render($image_html, compact('row')),
+                        "category_name" => $row->getcategory?->name,
+                        "tag_name" => $row->gettag?->name,
+                        "weight" => $row->weight,
+                        "price" => $row->price ?? '-',
+                        "discount_price" => $row->discount_price ?? '-',
+                        "created_at" => $row->created_at?->toDateTimeString(),
+                        "status" => sprintf('<span class="badge badge-%s">%s</span>', $status_color, $row->status),
+                        "handle" => Blade::render($action_html, compact('row'))
+                    ];
+                })
+                ->filter(function ($builder, $keyword) {
+                    return [
+                        'category_name' => $builder->whereRelation('getcategory', 'name', 'like', "%$keyword%"),
+                        'tag_name' => $builder->whereRelation('gettag', 'name', 'like', "%$keyword%"),
+                    ];
+                })
+                ->json();
+            // return $product_category = SubCategory::where('category_id', $request->id)->orderByDesc('created_at')->get();
+            // return $product_sub_category = SubSubCat::where('sub_cat_id', $request->id)->orderByDesc('created_at')->get();
         }
-        $list = Product::with(['image', 'getcategory', 'gettag', 'getsubcategory' => function ($query) {
-            // $query->where('id',5);
-            $query->with('getsubsubcategory');
-        }])->orderByDesc('created_at')->get();
 
         $product_origin = ProductOrigin::orderByDesc('created_at')->get();
+
         return view('backend.admin.product.index', get_defined_vars());
     }
 
@@ -469,7 +518,7 @@ class ProductController extends Controller
     }
 
 
-    // export 
+    // export
     public function export(Request $request)
     {
         $ids = $request->ids;

@@ -11,7 +11,7 @@
             <!-- Dashboard Ecommerce Starts -->
             <section id="dashboard-ecommerce">
                 <div class="row">
-                   
+
                     <div class="col-xl-12 col-12 dashboard-users">
                         <ul class="row nav nav-tabs " id="charts-tabs" role="tablist" >
                             <!-- Statistics Cards Starts -->
@@ -66,11 +66,11 @@
                                     </div>
                                 </button>
                             </a>
-                            </li>  
+                            </li>
                         </ul>
                     </div>
                 </div>
-                
+
             </section>
             <section>
                 <div class="row " id="myTabContent">
@@ -82,12 +82,12 @@
                             <!--<span class="mr-25">$25,980</span>-->
                             <div class="form-floating">
                               <select class="form-select" id="open-orders-data" aria-label="Floating label select example">
-                                
+
                                 <option value="year">Year</option>
                                 <option value="month">Month</option>
                                 <option value="day">Day</option>
                               </select>
-                              
+
                             </div>
                         </div>
                     </div>
@@ -103,12 +103,12 @@
                             <!--<span class="mr-25">$25,980</span>-->
                             <div class="form-floating">
                               <select class="form-select" id="delivered-orders-data" aria-label="Floating label select example">
-                                
+
                                 <option value="year">Year</option>
                                 <option value="month">Month</option>
                                 <option value="day">Day</option>
                               </select>
-                              
+
                             </div>
                         </div>
                     </div>
@@ -125,12 +125,12 @@
                             <!--<span class="mr-25">$25,980</span>-->
                             <div class="form-floating">
                               <select class="form-select" id="total-payment-data" aria-label="Floating label select example">
-                                
+
                                 <option value="year">Year</option>
                                 <option value="month">Month</option>
                                 <option value="day">Day</option>
                               </select>
-                              
+
                             </div>
                         </div>
                     </div>
@@ -147,12 +147,12 @@
                                 <!--<span class="mr-25">$25,980</span>-->
                                 <div class="form-floating">
                               <select class="form-select" id="new-customer-data" aria-label="Floating label select example">
-                                
+
                                 <option value="year">Year</option>
                                 <option value="month">Month</option>
                                 <option value="day">Day</option>
                               </select>
-                              
+
                             </div>
                             </div>
                         </div>
@@ -171,6 +171,6 @@
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{{ asset('app-assets/js/custom-charts.js') }}" type="module"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js" integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js" integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js"></script>
 @endsection

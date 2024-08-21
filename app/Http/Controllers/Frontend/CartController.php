@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Models\Product;
 use Illuminate\Support\Facades\Redirect;
 use App\Models\Cart;
 // use Auth;
@@ -14,10 +15,7 @@ class CartController extends Controller
 {
     public function cart()
     {
-
         $cart = Cart::where('user_id', Auth::user()->id)->with('getproduct')->get();
-
-
 
         // return Redirect::to(url()->previous());
         return view('frontend.master', get_defined_vars());
@@ -71,5 +69,46 @@ class CartController extends Controller
         Cart::query()->where('user_id', auth()->user()->id)->delete();
 
         return redirect()->route('index')->with('warning', "All Products Has Been Deleted Successfully!");
+    }
+
+    public function checkCartItems()
+    {
+
+        $items = request()->post('items', []);
+
+        $products = [];
+        $out_of_stock = [];
+        $price_changed = false;
+        foreach ($items as $item) {
+            $product = Product::find($item['item_id']);
+            if ($product->status == 'Out Of Stock') {
+                $out_of_stock[] = $product->id;
+                continue;
+            }
+            if ($product->discount_price != $item['item_sale_price']) {
+                $price_changed = true;
+            }
+            if (str_replace([',','.'], '', $product->price) != str_replace([',','.'], '', $item['item_price'])) {
+                $price_changed = true;
+            }
+            $products[] = [
+                'id' => $product->id,
+                'name' => $product->name,
+                'price' => $product->price,
+                'sale_price' => $product->discount_price,
+                'tax' => $product->tax,
+                'pant' => $product->pant,
+                'buy_two' => $product->buy_two_get,
+                'status' => $product->status,
+            ];
+        }
+
+        return [
+            'out_of_stock' => $out_of_stock,
+            'price_changed' => $price_changed,
+            'products' => $products,
+            'items' => $items,
+        ];
+
     }
 }

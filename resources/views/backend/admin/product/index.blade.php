@@ -1,16 +1,10 @@
 @extends('backend.admin.master')
 @section('css')
-    <!-- BEGIN: Vendor CSS-->
     <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/vendors/css/vendors.min.css') }}">
-    <link rel="stylesheet" type="text/css"
-        href="{{ asset('app-assets/vendors/css/tables/datatable/dataTables.bootstrap4.min.css') }}">
-    <link rel="stylesheet" type="text/css"
-        href="{{ asset('app-assets/vendors/css/tables/datatable/responsive.bootstrap4.min.css') }}">
-    <link rel="stylesheet" type="text/css"
-        href="{{ asset('app-assets/vendors/css/tables/datatable/buttons.bootstrap4.min.css') }}">
-    <link rel="stylesheet" type="text/css"
-        href="{{ asset('app-assets/vendors/css/tables/datatable/dataTables.dateTime.min.css') }}">
-    <!-- END: Vendor CSS-->
+    <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/vendors/css/tables/datatable/dataTables.bootstrap4.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/vendors/css/tables/datatable/responsive.bootstrap4.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/vendors/css/tables/datatable/buttons.bootstrap4.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/vendors/css/tables/datatable/dataTables.dateTime.min.css') }}">
 @endsection
 @section('content')
     <div class="app-content content">
@@ -92,51 +86,6 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($list as $item)
-                                                <tr>
-                                                    <td><input type="checkbox" name="ids" class="checkeds"
-                                                            value="{{ $item->id }}"></td>
-                                                    <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $item->id }}</td>
-                                                    <td>{{ $item->name }}</td>
-                                                    <td style="display: grid;">
-
-
-                                                        <div style="position: relative;">
-
-
-                                                            {{-- <a href="{{ route('image.delete',['proimage'=>$image->id]) }}"><i class="fa fa-times" aria-hidden="true" style=" position: absolute; left: 41px; "></i></a> --}}
-
-                                                            <img loading="lazy"
-                                                                src="{{ asset($item->image ? $item->image->path : 'frontend/images/no-item.png') }}"
-                                                                width="50px" height="40px" alt="">
-                                                        </div>
-
-
-                                                    </td>
-                                                    <td>{{ $item->getcategory ? $item->getcategory->name : '' }}</td>
-                                                    <td>{{ $item->gettag ? $item->gettag->name : '' }}</td>
-                                                    <td>{{ $item->weight }}</td>
-                                                    <td>{{ $item ? $item->price : '-' }}</td>
-                                                    <td>{{ $item ? $item->discount_price : '-' }}</td>
-                                                    <td>
-                                                        @if ($item->status == 'In Stock')
-                                                            <span class="badge badge-success">In Stock</span>
-                                                        @elseif($item->status == 'Out Of Stock')
-                                                            <span class="badge badge-danger">Out Of Stock</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>{{ $item->created_at }}</td>
-                                                    <td>
-                                                        <a
-                                                            href="{{ route('admin.product.edit', ['product' => $item->id]) }}"><i
-                                                                class="bx bx-edit-alt" style="color: green;"></i></a>
-                                                        <a href="{{ route('admin.product.destroy', ['product' => $item->id]) }}"
-                                                            onclick="return confirm('Are You Sure To Delete This  ?')"><i
-                                                                class="bx bx-trash-alt" style="color: green;"></i></a>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
                                         </tbody>
                                     </table>
                                 </div>
@@ -151,11 +100,9 @@
         </div>
     </div>
     <!-- Modal -->
-    <div class="modal fade" id="bulkimport" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="bulkimport" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form id="fileForm" action="{{ route('admin.product.import') }}" method="POST"
-                enctype="multipart/form-data">
+            <form id="fileForm" action="{{ route('admin.product.import') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
@@ -177,6 +124,7 @@
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="submit" id="save" class="btn btn-primary">Import</button>
                     </div>
+                </div>
             </form>
         </div>
     </div>
@@ -209,25 +157,7 @@
     <script>
         $(document).ready(function() {
 
-
             let minDate, maxDate;
-
-            // Custom filtering function which will search data in column four between two values
-            DataTable.ext.search.push(function(settings, data, dataIndex) {
-                let min = minDate.val();
-                let max = maxDate.val();
-                let date = new Date(data[10]);
-
-                if (
-                    (min === null && max === null) ||
-                    (min === null && date <= max) ||
-                    (min <= date && max === null) ||
-                    (min <= date && date <= max)
-                ) {
-                    return true;
-                }
-                return false;
-            });
 
             // Create date inputs
             minDate = new DateTime('#min', {
@@ -236,12 +166,38 @@
             maxDate = new DateTime('#max', {
                 format: 'MMMM Do YYYY'
             });
-            let table = new DataTable('#customer-table');
+
+            let table = new DataTable('#customer-table', {
+                processing: true,
+                serverSide: true,
+                destroy: true, // Add this line to destroy any existing instance
+                ajax: {
+                    url: "/admin/product/index",
+                    data: function(d) {
+                        d.minDate = minDate.val();
+                        d.maxDate = maxDate.val();
+                    }
+                },
+                columns: [
+                    { data: 'checkbox', name: 'checkbox', searchable: false, orderable: false },
+                    { data: 'dt_auto_index', name: 'dt_auto_index', searchable: false, orderable: false },
+                    { data: 'id', name: 'id' },
+                    { data: 'name', name: 'name' },
+                    { data: 'image', name: 'image' },
+                    { data: 'category_name', name: 'category_name' },
+                    { data: 'tag_name', name: 'tag_name' },
+                    { data: 'weight', name: 'weight' },
+                    { data: 'price', name: 'price' },
+                    { data: 'discount_price', name: 'discount_price' },
+                    { data: 'status', name: 'status' },
+                    { data: 'created_at', name: 'created_at' },
+                    { data: 'handle', name: 'handle', searchable: false, orderable: false },
+                    // Add more columns as needed
+                ],
+            });
             document.querySelectorAll('#min, #max').forEach((el) => {
                 el.addEventListener('change', () => table.draw());
             });
-
-
 
         });
     </script>
@@ -252,9 +208,7 @@
 
             var batchId = "{{ session('batch') }}";
             const batchInterval = setInterval(function() {
-                // if()
 
-                console.log("batch: " + batchId)
                 if (batchId) {
                     updateProgress(batchId);
                 } else {
@@ -319,9 +273,6 @@
                 }
             ],
             dom: 'Bfrtip',
-            select: true
-        });
-        new DataTable('#all-products', {
             columnDefs: [{
                 orderable: false,
                 className: 'select-checkbox',
@@ -334,7 +285,6 @@
             order: [
                 [1, 'asc']
             ]
-            // select: true
         });
     </script>
 @endsection

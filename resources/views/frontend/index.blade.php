@@ -2,24 +2,17 @@
 @section('content')
     @if (session('error'))
         <div id="error" class="flex p-4 mb-4 text-red-800 rounded-lg bg-red-50 " role="alert">
-            <svg aria-hidden="true" class="flex-shrink-0 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd"
-                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                    clip-rule="evenodd"></path>
+            <svg aria-hidden="true" class="flex-shrink-0 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
             </svg>
             <span class="sr-only">Info</span>
             <div class="ml-3 text-sm font-medium">
                 {{ session('error') }}
             </div>
-            <button type="button"
-                class="ml-auto -mx-1.5 -my-1.5 bg-red-50 text-red-500 rounded-lg focus:ring-2 focus:ring-red-400 p-1.5 hover:bg-red-200 inline-flex h-8 w-8 "
-                data-dismiss-target="#error" aria-label="Close">
+            <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-red-50 text-red-500 rounded-lg focus:ring-2 focus:ring-red-400 p-1.5 hover:bg-red-200 inline-flex h-8 w-8 " data-dismiss-target="#error" aria-label="Close">
                 <span class="sr-only">Avbryt</span>
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd"
-                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                        clip-rule="evenodd"></path>
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
                 </svg>
             </button>
         </div>
@@ -30,8 +23,7 @@
             <div class="bg-green-50 w-full p-2 rounded-2xl">
                 <div class="flex justify-evenly">
                     <div class="flex items-center space-x-2 w-72">
-                        <img src="{{ asset('frontend/images/icon1.png') }}" alt="price"
-                            class="bg-white-800 bg-opacity-50  w-20 h-w-20">
+                        <img src="{{ asset('frontend/images/icon1.png') }}" alt="price" class="bg-white-800 bg-opacity-50  w-20 h-w-20">
                         <div class="w-full">
                             <h1 class="text-xl font-bold whitespace-nowrap">Ny mataffär på nätet</h1>
                             <p class="text-justify">Vi pressar matpriserna </p>
@@ -39,11 +31,12 @@
                     </div>
 
                     <div class="flex items-center space-x-2 w-72">
-                        <img src="{{ asset('frontend/images/icon2.png') }}" alt="truck"
-                            class="bg-white-800 bg-opacity-50  w-20 h-w-20">
+                        <img src="{{ asset('frontend/images/icon2.png') }}" alt="truck" class="bg-white-800 bg-opacity-50  w-20 h-w-20">
                         <div class="w-full">
                             <h1 class="text-xl font-bold whitespace-nowrap">Gratis leverans</h1>
-                            <p class="text-justify">Vid köp över 650 kr</p>
+                            @if(auth()->user()?->customer_type!=1)
+                                <p class="text-justify">Vid köp över 650 kr</p>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -90,10 +83,8 @@
                         <!--  class="mx-[3px] box-content h-[3px] w-[30px] flex-initial cursor-pointer border-0 border-y-[10px] border-solid border-transparent bg-white bg-clip-padding p-0 -indent-[999px] opacity-50 transition-opacity duration-[600ms] ease-[cubic-bezier(0.25,0.1,0.25,1.0)] motion-reduce:transition-none"-->
                         <!--  aria-label="Slide 3"></button>-->
                     </div>
-                    <div
-                        class="relative rounded-[20px] w-full max-h-[25rem] overflow-hidden after:clear-both after:block after:content-['']">
-                        <div class="relative float-left -mr-[100%] w-full transition-transform duration-[600ms] ease-in-out motion-reduce:transition-none"
-                            style="backface-visibility: hidden;">
+                    <div class="relative rounded-[20px] w-full max-h-[25rem] overflow-hidden after:clear-both after:block after:content-['']">
+                        <div class="relative float-left -mr-[100%] w-full transition-transform duration-[600ms] ease-in-out motion-reduce:transition-none" style="backface-visibility: hidden;">
                             <img src="{{ asset('frontend/images/2.png') }}" class="block w-full" alt="..." />
                         </div>
                         <!--<div-->
@@ -109,29 +100,21 @@
                         <!--  <img src="{{ asset('frontend/images/3.png') }}" class="block w-full" alt="..."/>-->
                         <!--</div>-->
                     </div>
-                    <button
-                        class="absolute top-0 bottom-0 left-0 z-[0] flex w-[15%] items-center justify-center border-0 bg-none p-0 text-center text-white opacity-50 transition-opacity duration-150 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] hover:text-white hover:no-underline hover:opacity-90 hover:outline-none focus:text-white focus:no-underline focus:opacity-90 focus:outline-none motion-reduce:transition-none"
-                        type="button">
+                    <button class="absolute top-0 bottom-0 left-0 z-[0] flex w-[15%] items-center justify-center border-0 bg-none p-0 text-center text-white opacity-50 transition-opacity duration-150 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] hover:text-white hover:no-underline hover:opacity-90 hover:outline-none focus:text-white focus:no-underline focus:opacity-90 focus:outline-none motion-reduce:transition-none" type="button">
                         <span class="inline-block h-8 w-8">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="h-6 w-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                             </svg>
                         </span>
-                        <span
-                            class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Previous</span>
+                        <span class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Previous</span>
                     </button>
-                    <button
-                        class="absolute top-0 bottom-0 right-0 z-[0] flex w-[15%] items-center justify-center border-0 bg-none p-0 text-center text-white opacity-50 transition-opacity duration-150 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] hover:text-white hover:no-underline hover:opacity-90 hover:outline-none focus:text-white focus:no-underline focus:opacity-90 focus:outline-none motion-reduce:transition-none"
-                        type="button">
+                    <button class="absolute top-0 bottom-0 right-0 z-[0] flex w-[15%] items-center justify-center border-0 bg-none p-0 text-center text-white opacity-50 transition-opacity duration-150 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] hover:text-white hover:no-underline hover:opacity-90 hover:outline-none focus:text-white focus:no-underline focus:opacity-90 focus:outline-none motion-reduce:transition-none" type="button">
                         <span class="inline-block h-8 w-8">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="h-6 w-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                             </svg>
                         </span>
-                        <span
-                            class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Next</span>
+                        <span class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Next</span>
                     </button>
                 </div>
 
@@ -173,7 +156,7 @@
             </div>
         </div>
     </div> --}}
-    {{-- 
+    {{--
     @if (\App\Models\Product::where('veckans_extrapriser', 1)->where('status', 'In Stock')->count() > 0)
         <div class="card-slider max-w-screen-xl mx-auto px-[16px] py-[12px]">
             <div class="">
@@ -496,11 +479,9 @@
         <div class="flex" aria-label="Breadcrumb">
             <ol class="inline-flex flex-wrap items-center space-x-1 md:space-x-3 my_home_breadcrumb_container">
                 <li class="inline-flex items-center">
-                    <a href="/"
-                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+                    <a href="/" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
                         <svg aria-hidden="true" class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
+                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
                             </path>
                         </svg>
                         Hem
@@ -509,24 +490,18 @@
                 <li>
                     <div class="flex items-center">
                         <svg aria-hidden="true" class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"></path>
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                         </svg>
-                        <a href="http://localhost:8000/product/category?category=5"
-                            class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white">Fisk
+                        <a href="http://localhost:8000/product/category?category=5" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white">Fisk
                             &amp; skaldjur</a>
                     </div>
                 </li>
                 <li aria-current="page">
                     <div class="flex items-center">
                         <svg aria-hidden="true" class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"></path>
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                         </svg>
-                        <a href="http://localhost:8000/product/sub_cat/23"
-                            class="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">Fisk</a>
+                        <a href="http://localhost:8000/product/sub_cat/23" class="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">Fisk</a>
                     </div>
                 </li>
             </ol>
@@ -560,8 +535,7 @@
                 <div class="col-md-3">
                     <div class="category-filter">
                         <div class="dropdown sortby-dropdown" id="category-sortby-dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
-                                data-bs-toggle="dropdown" aria-expanded="false">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                 Populärast
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
@@ -604,8 +578,7 @@
                     @endif
                 </div> --}}
 
-                <a class="btn btn-success my-4 col-12 col-lg-9 mx-auto LoadMore home-category-load-more-btn hidden"
-                    id="HomeCategoryLoadMore">Ladda mer</a>
+                <a class="btn btn-success my-4 col-12 col-lg-9 mx-auto LoadMore home-category-load-more-btn hidden" id="HomeCategoryLoadMore">Ladda mer</a>
             </div>
         </div>
 

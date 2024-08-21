@@ -151,7 +151,7 @@ return [
     ],
      'start_date' => [
         'required' => 'Fältet för startdatum är obligatoriskt.',
-       
+
     ],
     'name'=>[
         'required' =>'Namn fältet är obligatoriskt.',
@@ -161,16 +161,21 @@ return [
         ],
         'email'=>[
         'required' =>'E-post fältet är obligatoriskt.',
+        'unique' =>'E-post har redan tagits.',
         ],
-        
+
         'city'=>[
         'required' =>'Stadsfältet är obligatoriskt.',
         ],
-        
+
         'postal_code'=>[
         'required' =>'Postnummerfältet är obligatoriskt.',
         ],
-        
+
+        'first_name'=>[
+        'required' =>'Förnamn fältet är obligatoriskt.',
+        ],
+
         'last_name'=>[
         'required' =>'Efternamnsfältet är obligatoriskt.',
         ],
@@ -207,7 +212,7 @@ return [
         // 'text2'=>[
         // 'required' =>'Svarsfältet är obligatoriskt.',
         // ],
-        
+
     ],
 
     /*

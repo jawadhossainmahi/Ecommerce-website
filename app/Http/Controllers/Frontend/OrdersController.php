@@ -139,10 +139,11 @@ class OrdersController extends Controller
         }
     }
 
-    public function edit($order_id){
-        $order = Orders::where('id',$order_id)->first();
+    public function edit($order_id)
+    {
+        $order = Orders::where('id', $order_id)->first();
         list($discount_without_coupons, $total, $total_discount, $tax, $totalTaxAmt12, $totalTaxAmt25) = order_details($order);
         $categories = Category::get();
-        return view("frontend.edit_order",get_defined_vars());
+        return view("frontend.edit_order", get_defined_vars());
     }
 }
