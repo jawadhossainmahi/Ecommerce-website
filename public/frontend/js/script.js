@@ -726,12 +726,12 @@ function GetCartProductFromCache() {
                     if (Number(cartItems[i].products[j].tax) == 12) {
                         let _tax_percent = Number((cartItems[i].products[j].tax) / 100);
                         let _product_price = Number(normal_price_format(cartItems[i].products[j].item_price, cartItems[i].products[j].quantity));
-                        tax_12 += _product_price - (_product_price/1+_tax_percent);
+                        tax_12 += _product_price - (_product_price / 1 + _tax_percent);
                     }
                     else if (Number(cartItems[i].products[j].tax) == 25) {
                         let _tax_percent = Number((cartItems[i].products[j].tax) / 100);
                         let _product_price = Number(normal_price_format(cartItems[i].products[j].item_price, cartItems[i].products[j].quantity));
-                        tax_25 += _product_price - (_product_price/1+_tax_percent);
+                        tax_25 += _product_price - (_product_price / 1 + _tax_percent);
                     }
                     if (buy_two_for && buy_two_for !== undefined) {
 
@@ -1147,25 +1147,25 @@ function GetCartProductFromCache() {
 
         if (grand_total <= maxAmount) {
             remainingAmount = maxAmount - grand_total;
-            if(document.getElementById("counter")) {
+            if (document.getElementById("counter")) {
                 document.getElementById("counter").innerHTML = 'Handla för ' + price_display_format(remainingAmount) + ' till';
             }
 
             progressPercentage = (grand_total / maxAmount) * 100;
         } else {
             remainingAmount = 0;
-            if(document.getElementById("counter")) {
+            if (document.getElementById("counter")) {
                 document.getElementById("counter").innerHTML = 'Klar för kassan';
             }
             progressPercentage = 0;
         }
-        if ( document.getElementById("cdp-bar") ) {
+        if (document.getElementById("cdp-bar")) {
             document.getElementById("cdp-bar").style.width = progressPercentage + "%";
         }
         // cdp-progress-bar
 
         if (counterForBusiness?.className && counterForBusiness.className == 'business') {
-            if ( document.getElementById("p-bar") ) {
+            if (document.getElementById("p-bar")) {
                 document.getElementById("p-bar").style.width = 0 + "%";
             }
             if (grand_total < 1500) {
@@ -2033,7 +2033,7 @@ function card(
                         </div>`;
         buy_two_for_compare = "buy_two_for_compare";
     } else {
-        buy_two_for += `<div class="discount absolute right-10 ${price_format(data.discount_price) <= 0 ? "hidden" : ""
+        buy_two_for += `<div class="discount absolute right-[4.5rem] ${price_format(data.discount_price) <= 0 ? "hidden" : ""
             }" >
                             <i class="fa fa-certificate"></i>
                             <h5>${data.discount_price}:-</h5>
@@ -2041,7 +2041,7 @@ function card(
     }
     let pant = "";
     if (data.pant) {
-        pant += `<div class="text-[11px]">+<span class="hidden pant">${data.pant}</span>pant</div>`;
+        pant += `<div class="text-[11px] hidden">+<span class="hidden pant">${data.pant}</span>pant</div>`;
     }
 
     let discount_price_hidden = "";
@@ -2115,20 +2115,19 @@ function card(
             <div class="card-body">
                 <h5 class="card-title text-center product-name" data-bs-toggle="modal" data-bs-target="#${modal_class}-${data.id
         }">${data.name}</h5>
-                <div class=" d-flex justify-content-center" data-bs-toggle="modal" data-bs-target="#${modal_class}-${data.id
+                <div class=" d-flex justify-content-center" data-bs-toggle="modal" data-bs-target="#${modal_class}-${data.id1
         }">
                 <h4 class="tag" data-bs-toggle="modal" data-bs-target="#${modal_class}-${data.id
         }">${data.weight} </h4>
                  </div>
                 <div class="price" data-bs-toggle="modal" data-bs-target="#${modal_class}-${data.id
         }">
-                    <span>
+          <span>
 
                         ${category}
                         ${price_per_item}
                     </span>
                     ${price}
-
                 </div>
                 <div class="card-counter-div card-counter d-flex " style="${(cart_item !== undefined && cart_item.quantity > 0) ||
             quantity > 0
@@ -3561,7 +3560,7 @@ function TotalCartCount(qty) {
                 document.getElementById("p-bar").style.width = 0 + "%";
             }
             let counter = document.getElementById("counter");
-            if(counter) {
+            if (counter) {
                 counter.innerHTML = 'Handla för 1500 till';
             }
         } else {
@@ -4320,7 +4319,8 @@ if (delivery_time) {
                 success: function (data) {
 
                     GetDeliveryTimeSession();
-                    if (checkout_redirect) {ta
+                    if (checkout_redirect) {
+                        ta
                         window.location.replace(BASE_URL + "checkout");
                     }
                     let checkout_redirect_cache = JSON.parse(localStorage.getItem("checkout_redirect"))
@@ -4356,7 +4356,7 @@ $(cartOffCanvas).on('show.bs.offcanvas', function (event) {
     }, []);
 
     $.ajax({
-        url: BASE_URL+'check-cart-items',
+        url: BASE_URL + 'check-cart-items',
         method: "POST",
         data: { items: productItems },
         success: function (response) {
@@ -4564,7 +4564,7 @@ if (checkout) {
                 if (document.getElementsByClassName("post_title")[0]) {
                     document.getElementsByClassName("post_title")[0].innerText = "Ange ett nytt postnummer";
                 }
-                if(document.getElementsByClassName("post_details")[0]) {
+                if (document.getElementsByClassName("post_details")[0]) {
                     document.getElementsByClassName("post_details")[0].style.display = "none";
                 }
                 if (document.getElementById("postcode_error")) {
@@ -4586,7 +4586,7 @@ if (checkout) {
                     document.getElementById("postcode_error").classList.add("hidden")
                     document.getElementById("postcode_error").innerText = '';
                 }
-                if ( document.getElementsByClassName("post_details")[0] ) {
+                if (document.getElementsByClassName("post_details")[0]) {
                     document.getElementsByClassName("post_details")[0].style.display = "block";
                 }
 
@@ -4863,7 +4863,7 @@ function getCartData() {
         },
         data: {
             cart: JSON.stringify(cart),
-            _token:  $('meta[name="csrf-token"]').attr("content"),
+            _token: $('meta[name="csrf-token"]').attr("content"),
         },
 
         success: function (data) {
